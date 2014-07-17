@@ -1,26 +1,27 @@
 package com.cfranco.inventory.graphic;
 
 import java.awt.Color;
-import java.awt.EventQueue;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
+import javax.sound.sampled.LineUnavailableException;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.BevelBorder;
-import javax.swing.border.EmptyBorder;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-import com.cfranco.inventory.main.InventoryData;
+import com.cfranco.inventory.settings.InventoryData;
+import com.cfranco.inventory.settings.SoundUtils;
 
-public class MainWindow extends JFrame {
+public class MainWindow extends JFrame implements KeyListener {
 
 	/**
 	 * 
@@ -28,26 +29,10 @@ public class MainWindow extends JFrame {
 	private static final long serialVersionUID = 1L;
 	private JPanel contentPane;
 	private JTextField fileDestTextField;
-	private JTextField textField_1;
+	private JTextField inputTextField;
 	private InventoryData data;
+	private JTextArea status;
 
-	/**
-	 * Launch the application.
-	 */
-	public static void main(String[] args) {
-		
-		
-		EventQueue.invokeLater(new Runnable() {
-			public void run() {
-				try {
-					MainWindow frame = new MainWindow();
-					frame.setVisible(true);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		});
-	}
 
 	/**
 	 * Create the frame.
@@ -59,10 +44,8 @@ public class MainWindow extends JFrame {
 		setTitle("Inventory");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 450, 300);
-		contentPane = new JPanel();
-		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane = new InventoryPanel();
 		setContentPane(contentPane);
-		contentPane.setLayout(null);
 		
 		JLabel lblChooseThe = new JLabel("1. Choose the file destination:");
 		lblChooseThe.setBounds(10, 11, 414, 14);
@@ -78,12 +61,17 @@ public class MainWindow extends JFrame {
 				
 				int result = fc.showOpenDialog(MainWindow.this);
 				
+				
 				if(result == 0){
 					data.setFilePath(fc.getSelectedFile().getAbsolutePath());
 					fileDestTextField.setText(data.getFilePath());
+					inputTextField.setEnabled(true);
+					inputTextField.setEditable(true);
+					inputTextField.requestFocus();
+					
+					//print initial info to file
+					
 				}
-				JOptionPane.showMessageDialog(null, result);
-				
 				
 			}
 		});
@@ -101,23 +89,62 @@ public class MainWindow extends JFrame {
 		lblInsertThe.setBounds(10, 68, 414, 14);
 		contentPane.add(lblInsertThe);
 		
-		textField_1 = new JTextField();
-		textField_1.setEnabled(false);
-		textField_1.setBounds(10, 93, 232, 20);
-		contentPane.add(textField_1);
-		textField_1.setColumns(10);
+		inputTextField = new JTextField();
+		inputTextField.setEditable(false);
+		inputTextField.setEnabled(false);
+		inputTextField.setBounds(10, 93, 255, 20);
+		contentPane.add(inputTextField);
+		inputTextField.setColumns(10);
+		inputTextField.addKeyListener(this);
 		
-		JTextArea textArea = new JTextArea();
-		textArea.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
-		textArea.setBackground(Color.LIGHT_GRAY);
-		textArea.setEditable(false);
-		textArea.setEnabled(false);
-		textArea.setBounds(10, 142, 232, 83);
-		contentPane.add(textArea);
+		status = new JTextArea();
+		status.setBorder(new BevelBorder(BevelBorder.LOWERED, null, null, null, null));
+//		status.setBackground(Color.LIGHT_GRAY);
+		status.setBackground(new Color(252,252,252));
+		status.setEditable(false);
+		status.setBounds(10, 142, 255, 83);
+		contentPane.add(status);
 		
 		JLabel lblStatus = new JLabel("Status");
 		lblStatus.setFont(new Font("Tahoma", Font.BOLD, 11));
 		lblStatus.setBounds(10, 124, 46, 14);
 		contentPane.add(lblStatus);
+	}
+	
+	public void updateStatus(String status){
+		this.status.setText(status);
+	}
+	
+	public InventoryData getData() {
+		return data;
+	}
+
+	@Override
+	public void keyTyped(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void keyPressed(KeyEvent e) {
+		if(e.getKeyCode() == KeyEvent.VK_ENTER){
+			if(!data.addProduct(inputTextField.getText(), this)){
+				//BEEEEP
+				try {
+					SoundUtils.tone(650,700);
+				} catch (LineUnavailableException e1) {
+					e1.printStackTrace();
+				}
+			}
+			inputTextField.setText("");
+			inputTextField.requestFocus();
+		}
+		
+	}
+
+	@Override
+	public void keyReleased(KeyEvent e) {
+		// TODO Auto-generated method stub
+		
 	}
 }

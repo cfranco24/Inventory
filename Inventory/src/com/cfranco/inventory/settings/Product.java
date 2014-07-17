@@ -1,4 +1,4 @@
-package com.cfranco.inventory.products;
+package com.cfranco.inventory.settings;
 
 public class Product {
 	private int serialNumberLenght;
