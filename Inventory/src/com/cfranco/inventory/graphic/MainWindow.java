@@ -54,25 +54,7 @@ public class MainWindow extends JFrame implements KeyListener {
 		JButton btnBrowse = new JButton("Browse");
 		btnBrowse.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent arg0) {
-				final JFileChooser fc = new JFileChooser();
-				fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
-				FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "text");
-				fc.setFileFilter(filter);
-				
-				int result = fc.showOpenDialog(MainWindow.this);
-				
-				
-				if(result == 0){
-					data.setFilePath(fc.getSelectedFile().getAbsolutePath());
-					fileDestTextField.setText(data.getFilePath());
-					inputTextField.setEnabled(true);
-					inputTextField.setEditable(true);
-					inputTextField.requestFocus();
-					
-					//print initial info to file
-					
-				}
-				
+				browseButtonAction();
 			}
 		});
 		btnBrowse.setBounds(335, 36, 89, 23);
@@ -115,36 +97,72 @@ public class MainWindow extends JFrame implements KeyListener {
 		this.status.setText(status);
 	}
 	
+	public void setData(InventoryData data) {
+		this.data = data;
+	}
+	
 	public InventoryData getData() {
 		return data;
+	}
+	
+	public void browseButtonAction(){
+		final JFileChooser fc = new JFileChooser();
+		fc.setFileSelectionMode(JFileChooser.FILES_ONLY);
+		FileNameExtensionFilter filter = new FileNameExtensionFilter("TEXT FILES", "txt", "text");
+		fc.setFileFilter(filter);
+		
+		int result = fc.showOpenDialog(MainWindow.this);
+		
+		
+		if(result == 0){
+			data.setFilePath(fc.getSelectedFile().getAbsolutePath());
+			fileDestTextField.setText(data.getFilePath());
+			inputTextField.setEnabled(true);
+			inputTextField.setEditable(true);
+			inputTextField.requestFocus();
+			
+			//print initial info to file
+			
+		}
+	}
+	
+	public void enterButtonAction(){
+		if(!data.addProduct(inputTextField.getText(), this)){
+			//BEEEEP
+			try {
+				SoundUtils.tone(650,700);
+			} catch (LineUnavailableException e1) {
+				e1.printStackTrace();
+			}
+		}
+		inputTextField.setText("");
+		inputTextField.requestFocus();
+		
+	}
+	
+	public void setFileDestTextPath(String path){
+		fileDestTextField.setText(path);
+	}
+	
+	public JTextField getInputTextField() {
+		return inputTextField;
 	}
 
 	@Override
 	public void keyTyped(KeyEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void keyPressed(KeyEvent e) {
 		if(e.getKeyCode() == KeyEvent.VK_ENTER){
-			if(!data.addProduct(inputTextField.getText(), this)){
-				//BEEEEP
-				try {
-					SoundUtils.tone(650,700);
-				} catch (LineUnavailableException e1) {
-					e1.printStackTrace();
-				}
-			}
-			inputTextField.setText("");
-			inputTextField.requestFocus();
+			enterButtonAction();
 		}
 		
 	}
 
 	@Override
 	public void keyReleased(KeyEvent e) {
-		// TODO Auto-generated method stub
 		
 	}
 }
