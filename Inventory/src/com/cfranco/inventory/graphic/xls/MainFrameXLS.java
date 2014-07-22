@@ -2,7 +2,8 @@ package com.cfranco.inventory.graphic.xls;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.swing.JFileChooser;
-import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 import com.cfranco.inventory.graphic.MainWindow;
@@ -15,13 +16,22 @@ public class MainFrameXLS extends MainWindow {
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	private JPanel contentPane;
+	
+	private JScrollPane scrollPane;
+	private ProductTableModel model;
+	private JTable table;
 
 	/**
 	 * Create the frame.
 	 */
 	public MainFrameXLS() {
 		super();
+		
+		scrollPane = new JScrollPane();
+		scrollPane.setBounds(454, 0, 473, 256);
+		getContentPane().add(scrollPane);
+		
+		
 	}
 	
 	@Override
@@ -40,6 +50,11 @@ public class MainFrameXLS extends MainWindow {
 			super.getInputTextField().setEditable(true);
 			super.getInputTextField().requestFocus();
 			
+			table = new JTable();
+			model = new ProductTableModel((InventoryDataXLS)super.getData());
+			table.setModel(model);
+			scrollPane.setViewportView(table);
+			
 		}
 	}
 	
@@ -53,8 +68,10 @@ public class MainFrameXLS extends MainWindow {
 				e1.printStackTrace();
 			}
 		}
+		
+		model.refreshModel();
+		
 		super.getInputTextField().setText("");
 		super.getInputTextField().requestFocus();
 	}
-
 }

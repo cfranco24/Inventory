@@ -19,16 +19,16 @@ public class InventoryDataXLS extends InventoryData{
 	
 	private Workbook workbook;
 	private Sheet sheet;
-	private Cell[] serialNumberColumn;
+	private Cell[] serialNumberColumn, refSapColumn, descriptionColumn;
 	
 	private WritableWorkbook wrWorkbook;
 	private WritableSheet wrSheet;
 	
 	
-	private static final int SERIAL_NUMBER_COLUMN = 8;
-	private static final int REF_SAP_COLUMN = 5;
-	private static final int DESCRIPTION_COLUMN = 6;
-	private static final int VALIDATION_COLUMN = 11;
+	public static final int SERIAL_NUMBER_COLUMN = 8;
+	public static final int REF_SAP_COLUMN = 5;
+	public static final int DESCRIPTION_COLUMN = 6;
+	public static final int VALIDATION_COLUMN = 11;
 	
 	public InventoryDataXLS(String path) {
 		super.setFilePath(path);
@@ -40,11 +40,12 @@ public class InventoryDataXLS extends InventoryData{
 		try {
 			workbook = Workbook.getWorkbook(new File(super.getFilePath()));
 			sheet = workbook.getSheet(0);
+			
 			serialNumberColumn = sheet.getColumn(SERIAL_NUMBER_COLUMN);
+			refSapColumn = sheet.getColumn(REF_SAP_COLUMN);
+			descriptionColumn = sheet.getColumn(DESCRIPTION_COLUMN);
 			
-			wrWorkbook = Workbook.createWorkbook(new File("/home/cfranco/Desktop/output.xls"), workbook);
-			wrSheet = wrWorkbook.getSheet(0);
-			
+
 		} catch (BiffException | IOException e) {
 			e.printStackTrace();
 		}
@@ -83,6 +84,37 @@ public class InventoryDataXLS extends InventoryData{
 		
 		frame.updateStatus(status);
 		return false;
+	}
+	
+	public Cell[] getRefSapColumn() {
+		return refSapColumn;
+	}
+	
+	public Cell[] getDescriptionColumn() {
+		return descriptionColumn;
+	}
+	
+	public Cell[] getSerialNumberColumn() {
+		return serialNumberColumn;
+	}
+	
+	public String getSerialNumber(int row){
+		return serialNumberColumn[row].getContents();
+	}
+	
+	public String getSAPRef(int row){
+		return refSapColumn[row].getContents();
+	}
+	
+	public String getDescription(int row){
+		return descriptionColumn[row].getContents();
+	}
+	public boolean isValidated(int row){
+		if(sheet.getCell(VALIDATION_COLUMN, row).getContents().equalsIgnoreCase("OK")){
+			return true;
+		}
+		return false;
+		
 	}
 
 }

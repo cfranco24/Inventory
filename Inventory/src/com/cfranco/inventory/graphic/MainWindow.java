@@ -43,7 +43,7 @@ public class MainWindow extends JFrame implements KeyListener {
 		
 		setTitle("Inventory");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 450, 300);
+		setBounds(100, 100, 953, 311);
 		contentPane = new InventoryPanel();
 		setContentPane(contentPane);
 		
@@ -84,7 +84,7 @@ public class MainWindow extends JFrame implements KeyListener {
 //		status.setBackground(Color.LIGHT_GRAY);
 		status.setBackground(new Color(252,252,252));
 		status.setEditable(false);
-		status.setBounds(10, 142, 255, 83);
+		status.setBounds(10, 142, 315, 83);
 		contentPane.add(status);
 		
 		JLabel lblStatus = new JLabel("Status");
