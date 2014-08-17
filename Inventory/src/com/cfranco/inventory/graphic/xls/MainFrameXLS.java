@@ -2,6 +2,7 @@ package com.cfranco.inventory.graphic.xls;
 
 import javax.sound.sampled.LineUnavailableException;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -9,6 +10,12 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import com.cfranco.inventory.graphic.MainWindow;
 import com.cfranco.inventory.settings.InventoryDataXLS;
 import com.cfranco.inventory.settings.SoundUtils;
+
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+
+import java.awt.event.ActionListener;
+import java.awt.event.ActionEvent;
 
 public class MainFrameXLS extends MainWindow {
 
@@ -31,7 +38,24 @@ public class MainFrameXLS extends MainWindow {
 		scrollPane.setBounds(454, 0, 473, 256);
 		getContentPane().add(scrollPane);
 		
+		JMenuBar menuBar = new JMenuBar();
+		setJMenuBar(menuBar);
 		
+		JMenuItem mntmHelp = new JMenuItem("Help");
+		mntmHelp.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				
+				String help = "1. Select the file wich has the inventory. \n"
+						+ "(ATTENTION: The file must have the extension .xls!! .xlsx will not be accepted!)\n\n"
+						+ "2. Insert the serial number in the box manually or with bar code scanner. The item will\n"
+						+ "be marked in the file with an OK at the column 'L' and the serial number will be put in a .txt file \n"
+						+ "named as \"Serial_Numbers.txt\", in the same directory as the inventory file.\n\n"
+						+ "3. It's free. Don't complain! :)";
+				
+				JOptionPane.showMessageDialog(null, help);
+			}
+		});
+		menuBar.add(mntmHelp);
 	}
 	
 	@Override
@@ -54,7 +78,6 @@ public class MainFrameXLS extends MainWindow {
 			model = new ProductTableModel((InventoryDataXLS)super.getData());
 			table.setModel(model);
 			scrollPane.setViewportView(table);
-			
 		}
 	}
 	

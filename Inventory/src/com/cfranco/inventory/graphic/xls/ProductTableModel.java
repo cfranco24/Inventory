@@ -1,5 +1,6 @@
 package com.cfranco.inventory.graphic.xls;
 
+import javax.swing.JOptionPane;
 import javax.swing.table.AbstractTableModel;
 
 import com.cfranco.inventory.settings.InventoryDataXLS;
@@ -34,6 +35,9 @@ public class ProductTableModel extends AbstractTableModel{
 		}
 
 		System.out.println("Number of rows to present: "+numberOfRowsToPresent);
+		if(numberOfRowsToPresent == 1){
+			JOptionPane.showMessageDialog(null, "Done! All products have been checked!");
+		}
 
 		tableData = new Object[numberOfRowsToPresent][columnNames.length];
 		int counter = 0;

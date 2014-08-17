@@ -38,12 +38,12 @@ public class MainWindow extends JFrame implements KeyListener {
 	 * Create the frame.
 	 */
 	public MainWindow() {
+		setResizable(false);
 		data = new InventoryData();
-		
 		
 		setTitle("Inventory");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setBounds(100, 100, 953, 311);
+		setBounds(100, 100, 953, 334);
 		contentPane = new InventoryPanel();
 		setContentPane(contentPane);
 		

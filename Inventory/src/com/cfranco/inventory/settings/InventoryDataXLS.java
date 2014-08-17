@@ -1,7 +1,11 @@
 package com.cfranco.inventory.settings;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
+
+import javax.swing.JOptionPane;
 
 import jxl.Cell;
 import jxl.Sheet;
@@ -24,6 +28,9 @@ public class InventoryDataXLS extends InventoryData{
 	private WritableWorkbook wrWorkbook;
 	private WritableSheet wrSheet;
 
+	private File txtFile;
+	private static final String TXT_FILE_NAME = "Serial_numbers.txt";
+
 
 	public static final int SERIAL_NUMBER_COLUMN = 8;
 	public static final int REF_SAP_COLUMN = 5;
@@ -33,7 +40,6 @@ public class InventoryDataXLS extends InventoryData{
 	public InventoryDataXLS(String path) {
 		super.setFilePath(path);
 		loadSheets();
-
 	}
 
 	public void loadSheets(){
@@ -56,6 +62,14 @@ public class InventoryDataXLS extends InventoryData{
 			wrSheet = wrWorkbook.getSheet(0);
 			wrSheet.addCell(label);
 
+			txtFile = new File(new File(super.getFilePath()).getParent()+File.separatorChar+TXT_FILE_NAME);
+			
+			txtFile.createNewFile();
+			
+//			if(!txtFile.exists()){
+//				txtFile.createNewFile();
+//			}
+
 			wrWorkbook.write();
 			wrWorkbook.close();
 		} catch (IOException e) {
@@ -72,12 +86,12 @@ public class InventoryDataXLS extends InventoryData{
 	public boolean isInInventory(String serialNumber, MainFrameXLS frame){
 		String status = "";
 		loadSheets();
-		
+
 		//Check if number is ICCID of a card
-		if(serialNumber.substring(0, 6).equalsIgnoreCase("089351"))
+		if(serialNumber.length() >= 6 && serialNumber.substring(0, 6).equalsIgnoreCase("089351"))
 			serialNumber = serialNumber.substring(2);
-		
-		
+
+
 		for (int i = 0; i < serialNumberColumn.length; i++) {
 			if(serialNumberColumn[i].getContents().equalsIgnoreCase(serialNumber)){
 				status = "Ref. SAP: "+sheet.getCell(REF_SAP_COLUMN, i).getContents()+"\n"+
@@ -89,6 +103,8 @@ public class InventoryDataXLS extends InventoryData{
 					wrWorkbook = Workbook.createWorkbook(new File(super.getFilePath()), workbook);
 					wrSheet = wrWorkbook.getSheet(0);
 					wrSheet.addCell(label);
+					
+					writeToTXTFile(serialNumber);
 
 					wrWorkbook.write();
 					wrWorkbook.close();
@@ -133,12 +149,27 @@ public class InventoryDataXLS extends InventoryData{
 	public String getDescription(int row){
 		return descriptionColumn[row].getContents();
 	}
+
 	public boolean isValidated(int row){
 		if(sheet.getCell(VALIDATION_COLUMN, row).getContents().equalsIgnoreCase("OK")){
 			return true;
 		}
 		return false;
 
+	}
+
+	private void writeToTXTFile(String serialNumber){
+		BufferedWriter out = null;
+
+		try {
+			out =  new BufferedWriter(new FileWriter(txtFile,true));
+			out.write(serialNumber);
+			out.newLine();
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+			JOptionPane.showMessageDialog(null, "Unable to write to file! Something went wrong.");
+		}
 	}
 
 }
