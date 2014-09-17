@@ -83,7 +83,7 @@ public class MainFrameXLS extends MainWindow {
 	
 	@Override
 	public void enterButtonAction() {
-		if(!((InventoryDataXLS)super.getData()).isInInventory(super.getInputTextField().getText().toUpperCase(), this)){
+		if(!((InventoryDataXLS)super.getData()).isInInventory(super.getInputTextField().getText().toUpperCase().trim(), this)){
 			//BEEEEP
 			try {
 				SoundUtils.tone(650,700);
